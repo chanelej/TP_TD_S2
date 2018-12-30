@@ -39,9 +39,18 @@ void rechercherItineraire(const Catalogue &c);
 // Mode d'emploi :
 //	Demande à l'utilisateur d'entrer une ville de départ et une ville d'arrivée, puis recherche l'itinéraire adapté.
 
-void exporterCatalogue(const Catalogue &c, std::string name);
+void exporterCatalogue(const Catalogue &c);
 // Mode d'emploi :
-// Permet d'exporter le catalogue dans un nouveau fichier
+// Permet d'exporter le catalogue dans un nouveau fichier ou un fichier déjà existant
+
+void ouvrirCatalogue(Catalogue &c);
+// Mode d'emploi :
+// Permet d'ouvrir un catalogue présent dans un fichier name et de l'importer dans le catalogue courant
+
+int choixDuCritere(int &borneInf, int &borneSup, string &villeA, string &villeD);
+// Mode d'emploi :
+// Permet de matérialiser l'interface avec l'utilisateur qui lui permet de choisir le critère de sauvegarde/chargement.
+// Chaque cas particulier où la saisie n'est pas exploitable est traité, et un entier correspondant à un des critère est retourné.
 
 //-------------------------------------------------------------------- Main
 
@@ -52,18 +61,20 @@ int main(){
 
 	Catalogue c;
 	bool quitter = false;
-	
-	TrajetSimple *t1 = new TrajetSimple("A", "B", "Voiture");
+
+	/*TrajetSimple *t1 = new TrajetSimple("A", "B", "Voiture");
 	TrajetSimple *t2 = new TrajetSimple("B", "C", "Voiture");
 	TrajetCompose coucou;
 	coucou.Ajouter(t1);
 	coucou.Ajouter(t2);
-	cout << coucou.Script() << endl;
+
 	c.AjouterTrajet(t1);
 	c.AjouterTrajet(t2);
-	
-	exporterCatalogue(c, "catalogue.txt");
-	
+
+	exporterCatalogue(c, "catalogue.txt");*/
+
+	//ouvrirCatalogue(c, "catalogue.txt");
+
 	while(!quitter) {
 		choix = afficherMenu();
 
@@ -75,13 +86,20 @@ int main(){
 		}
 		else if (choix == 3) {
 			rechercherItineraire(c);
-		} else {
-			quitter = true;
 		}
+		else if (choix==4) {
+			exporterCatalogue(c);
+		}
+		else if (choix ==5) {
+			ouvrirCatalogue(c);
+        }
+        else {
+			quitter = true;
 
 		cout << "\r\n";
+        }
 	}
-	
+
 	return 0;
 }
 
@@ -92,25 +110,27 @@ unsigned int afficherMenu()
 	unsigned int choix;
 
 	do {
-		cout << "Choisissez parmi les options suivantes:" << endl;
+		cout << endl <<"Choisissez parmi les options suivantes:" << endl;
 		cout << "1. Afficher le catalogue" << endl;
 		cout << "2. Ajouter un trajet" << endl;
 		cout << "3. Rechercher un parcours" << endl;
-		cout << "4. Enregistrer et quitter." << endl;
+		cout << "4. Sauvegarder le catalogue courant" << endl;
+		cout << "5. Charger un catalogue depuis un fichier"<< endl;
+		cout << "6. Enregistrer et quitter" << endl;
 
 		char* reponse = new char[TAILLE_MAX_INDEX];
 		cin.getline(reponse, TAILLE_MAX_INDEX);
 
 		choix = 0;
 
-		if (strcmp(reponse, "1") == 0 || strcmp(reponse, "2") == 0 || strcmp(reponse, "3") == 0 || strcmp(reponse, "4") == 0) {
+		if (strcmp(reponse, "1") == 0 || strcmp(reponse, "2") == 0 || strcmp(reponse, "3") == 0 || strcmp(reponse, "4") == 0 || strcmp(reponse, "5") == 0 || strcmp(reponse, "6") == 0) {
 			choix = atoi(reponse); // convertit la chaîne de caractère en entier
 		}
 		else {
-			cout << endl << "Vous devez saisir un chiffre entre 1 et 4.\r\n" << endl;
+			cout << endl << "Vous devez saisir un chiffre entre 1 et 6.\r\n" << endl;
 		}
 
-		delete reponse;
+		delete[] reponse;
 	} while (choix == 0);
 
 	return choix;
@@ -166,7 +186,7 @@ void ajoutTrajet(Catalogue &c)
 		Trajet *t; // pointeur vers Trajet utilisé pour la liaison dynamique
 		TrajetSimple * t_simple = new TrajetSimple(villeDep, villeArr, transport);
 
-		t = t_simple; 
+		t = t_simple;
 		c.AjouterTrajet(t);
 	}
 
@@ -194,7 +214,7 @@ void ajoutTrajet(Catalogue &c)
 				}
 
 				char* reponse = new char[TAILLE_MAX_INDEX];
-				cin.getline(reponse, TAILLE_MAX_INDEX); 
+				cin.getline(reponse, TAILLE_MAX_INDEX);
 
 				choixTrajetCompose = 0;
 
@@ -214,7 +234,7 @@ void ajoutTrajet(Catalogue &c)
 				cin.getline(villeDep, TAILLE_MAX_VILLE);
 
 				cout << endl << "Ville d'arrivée: " << endl;
-				cin.getline(villeArr, TAILLE_MAX_VILLE); 
+				cin.getline(villeArr, TAILLE_MAX_VILLE);
 
 				cout << endl << "Moyen de transport: " << endl;
 				cin.getline(transport, TAILLE_MAX_TRANSPORT);
@@ -250,7 +270,7 @@ void ajoutTrajet(Catalogue &c)
 			}
 			else
 			{
-				t = tcompose; // pointeur de Trajet pour la liaison dynamique 
+				t = tcompose; // pointeur de Trajet pour la liaison dynamique
 				c.AjouterTrajet(t); // on met fin à l'itinéraire
 
 				delete[] villeEtapePrecedente;
@@ -282,8 +302,241 @@ void rechercherItineraire(const Catalogue &c)
 	delete[] villeArr;
 }
 
-void exporterCatalogue(const Catalogue &c, std::string name)
+void exporterCatalogue(const Catalogue &c)
 {
+    //Choix du critère par l'utilisateur via un appel à une autre méthode
+    int borneInf=0;
+    int borneSup=0;
+    string villeD="";
+    string villeA="";
+
+    int choixCrit=choixDuCritere(borneInf,borneSup,villeA,villeD);
+
+    //CHOIX DU NOM DE FICHIER PAR L'UTILISATEUR (se fait dans cette méthode)
+    //Gestion des cas particuliers : -> Fichier déjà existant et non vide : demander si on écrase le contenu ou non
+    //                               -> Fichier non existant : vérifier que le nom est valide (certains noms peuvent poser pb ? genre "." ou " " ?)
+    // -> Si problème, redemander à l'utilisateur de saisir un nom
+
+    //NB : tu peux utiliser le mm principe que ds la méthode "choixDuCritere" pr gérer l'interface ac l'utilisateur selon les cas particuliers
+
+    string name = "  "; //en attendant de demander le nom à l'utilisateur
+
 	std::ofstream outfile (name);
-	outfile << c.ConstruireScript(0);
+	outfile << c.ConstruireScript(choixCrit,borneInf,borneSup,villeA,villeD);
 }
+
+void ouvrirCatalogue(Catalogue &c)
+{
+    //Choix du critère par l'utilisateur via un appel à une autre méthode
+    int borneInf=0;
+    int borneSup=0;
+    string villeD="";
+    string villeA="";
+
+    int choixCrit=choixDuCritere(borneInf,borneSup,villeA,villeD);
+
+    //CHOIX DU FICHIER A IMPORTER : DEMANDE NOM A L'UTILISATEUR
+    //Gestion des cas particuliers : fichier n'existe pas + fichier est vide + autre chose ?
+    // -> Si problème, redemander à l'utilisateur de saisir un nom
+
+     //NB : tu peux utiliser le mm principe que ds la méthode "choixDuCritere" pr gérer l'interface ac l'utilisateur selon les cas particuliers
+
+
+    string name = "f"; //en attendant de demander le nom à l'utilisateur
+
+    string script = ""; //mettre le contenu du fichier ici
+
+    bool chargementReussi= c.ChargerScript(choixCrit,borneInf,borneSup,villeA,villeD,script);
+
+    /*TOUT CE QUI SUIT DOIT ETRE DANS LA METHODE CHARGERSCRIPT DE CATALOGUE ET PAS ICI*/
+    //Ici on doit juste récupérer le contenu du fichier et l'envoyer à chargerScript (qui lui ajoute les trajets)
+    ifstream infile (name, ios::in);
+    int nbrTrajets;
+    char vDep[TAILLE_MAX_VILLE];
+    char vArr[TAILLE_MAX_VILLE];
+    char tr[TAILLE_MAX_TRANSPORT];
+    string vDepart;
+    string vArrivee;
+    string transport;
+    string throwAway;
+    string ligne;
+
+    if(infile)
+    {
+        int i = 0;
+        string type;
+        infile >> throwAway >> throwAway >> throwAway >> throwAway >> nbrTrajets;
+        while(i < nbrTrajets)
+        {
+            i++;
+            do
+            {
+                infile >> type;
+                cout << type << endl;
+            } while(type != "TS" && type != "TC");
+
+        if(type == "TS")
+        {
+            /* infile >> throwAway >> vDepart >> throwAway >> vArrivee >> throwAway >> transport; */
+            getline(infile, throwAway, ':');
+            getline(infile, vDepart, ',');
+            getline(infile, vArrivee, ',');
+            getline(infile, transport);
+
+            std::strcpy(vDep, vDepart.c_str());
+            std::strcpy(vArr, vArrivee.c_str());
+            std::strcpy(tr, transport.c_str());
+            TrajetSimple *t = new TrajetSimple(vDep, vArr, tr);
+            c.AjouterTrajet(t);
+            afficherCatalogue(c);
+        }
+      }
+   } else {
+        cerr << "Impossible d'ouvrir le fichier !" << endl;
+   }
+
+    //NB : bien penser à faire fichier.open() et fichier.close() à la fin
+}
+
+int choixDuCritere(int &borneInf, int &borneSup, string &villeA, string &villeD){
+
+    int choix = 0;
+
+    do{
+        //PROPOSITION DES CRITERES
+
+        cout << endl<<"Choisissez parmi les critères suivants pour sélectionner les trajets : " << endl;
+        cout << "1. Sans critère de sélection." << endl;
+        cout << "2. Selon le type de trajets (simple/composé)." << endl;
+        cout << "3. Selon la ville de départ et/ou la ville d'arrivée." << endl;
+        cout << "4. Selon une sélection d'après un intervalle." << endl;
+
+        char* reponse = new char[TAILLE_MAX_INDEX];
+        cin.getline(reponse, TAILLE_MAX_INDEX);
+
+        //GESTION DES DIFFERENTS CAS
+
+        if (strcmp(reponse, "1") == 0) {
+            choix = atoi(reponse);
+        }
+         else if (strcmp(reponse, "2") == 0) {
+            choix =0;
+            do{
+                //Choix du type de trajet et gestion du cas où le chiffre ne correspond pas à l'une des propositions
+                cout << endl << "Choisissez le type trajet que vous souhaiter sélectionner :" << endl;
+                cout << "1. Trajets simples." << endl;
+                cout << "2. Trajets composés." << endl<<endl;
+
+                cin.getline(reponse, TAILLE_MAX_INDEX);
+
+                if (strcmp(reponse, "1") == 0 || strcmp(reponse, "2") == 0){
+                    choix = 20 + atoi(reponse);
+                }
+                else {
+                    cout << endl << "Vous devez saisir un chiffre entre 1 et 2" << endl;
+                }
+            } while (choix!=21 && choix!=22);
+        }
+
+         else if (strcmp(reponse, "3") == 0) {
+            choix = atoi(reponse);
+
+            do{
+                //Saisie du nom de(s) ville(s) et gestion du cas ou aucune ville n'est renseignée
+                cout << endl << "Saisissez les villes (entrez 0 si une des villes ne vous importe pas)" << endl;
+                cout << endl << "Ville de départ :" << endl;
+                cin.getline(reponse, TAILLE_MAX_INDEX);
+                villeD=reponse;
+                cout << "Ville d'arrivée : " << endl;
+                cin.getline(reponse, TAILLE_MAX_INDEX);
+                villeA=reponse;
+
+            if (villeA=="0" && villeD=="0"){
+                    cout<<endl<<"Vous devez obligatoirement renseigner le nom d'une des deux villes"<<endl<<endl;
+                }
+            } while (villeA=="0" && villeD=="0");
+        }
+
+         else if (strcmp(reponse, "4") == 0) {
+
+            choix = atoi(reponse);
+            bool bornesValides;
+
+            do{
+                bornesValides=true;
+                //Saisie des bornes de l'intervalle
+                cout << endl << "Saisissez les bornes de l'intervalle souhaité" << endl;
+                cout << endl << "Borne inférieure :" << endl;
+                cin.getline(reponse, TAILLE_MAX_INDEX);
+                borneInf=atoi(reponse);
+
+                cout << "Borne supérieure : " << endl;
+                cin.getline(reponse, TAILLE_MAX_INDEX);
+                borneSup=atoi(reponse);
+
+                //Gestion du cas où il y a une borne nulle (ou plusieurs)
+                if(borneSup==0 || borneInf==0){
+                    bornesValides=false;
+                    if(borneInf==0){
+                        borneInf++;
+                    }
+                    if(borneSup==0){
+                        borneSup++;
+                    }
+                    cout<<endl<<"Les bornes ne peuvent pas être nulles, vouliez vous dire : ["<<borneInf<<" ; "<<borneSup<<"] ?"<<endl;
+                    cout <<"Tapez oui ou non :  ";
+                    cin.getline(reponse, TAILLE_MAX_INDEX);
+                    if (strcmp(reponse, "oui") == 0){
+                        bornesValides=true;
+                    }
+                }
+
+                 //Gestion du cas où il y a une borne négative (ou plusieurs)
+                if(borneSup<0 || borneInf<0){
+                    bornesValides=false;
+                    if(borneInf<0){
+                        borneInf=-borneInf;
+                    }
+                    if(borneSup<0){
+                        borneSup=-borneSup;
+                    }
+                    cout<<endl<<"Les bornes ne peuvent pas être nulles, vouliez vous dire : ["<<borneInf<<" ; "<<borneSup<<"] ?"<<endl;
+                    cout <<"Tapez oui ou non :  ";
+                    cin.getline(reponse, TAILLE_MAX_INDEX);
+                    if (strcmp(reponse, "oui") == 0){
+                        bornesValides=true;
+                    }
+                }
+
+                  //Gestion du cas où borneInf est plus grande que borneSup
+                if(borneSup<borneInf){
+                    bornesValides=false;
+
+                    int tmp;
+                    tmp=borneInf;
+                    borneInf=borneSup;
+                    borneSup=tmp;
+                    cout<<endl<<"Les bornes doivent être rentrées dans l'ordre croissant, vouliez vous dire : ["<<borneInf<<" ; "<<borneSup<<"] ?"<<endl;
+                    cout <<"Tapez oui ou non :  ";
+                    cin.getline(reponse, TAILLE_MAX_INDEX);
+                    if (strcmp(reponse, "oui") == 0){
+                        bornesValides=true;
+                    }
+                }
+
+            }while (!bornesValides);
+        }
+
+        else {
+            cout << endl << "Vous devez saisir un chiffre entre 1 et 4.\r\n" << endl;
+        }
+
+        delete[] reponse;
+
+    } while (choix == 0);
+
+    return choix ;
+}
+
+
+
