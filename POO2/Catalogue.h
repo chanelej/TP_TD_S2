@@ -9,17 +9,21 @@
 #if ! defined ( CATALOGUE_H )
 #define CATALOGUE_H
 
+#include <cstring>
+
 #include "Trajet.h"
 #include "TrajetSimple.h"
 #include "TrajetCompose.h"
 #include "Graphe.h"
 #include "Tableau.h"
 
+using namespace std;
+
 //------------------------------------------------------------------------
 // Rôle du module <CATALOGUE>
 // Représente un catalogue constitué d'un ensemble de trajets.
 // Permet d'ajouter des trajets au catalogue, de  rechercher un itinéraire
-//(recherche simple et recherche avancée) et d'afficher la liste des trajets. 
+//(recherche simple et recherche avancée) et d'afficher la liste des trajets.
 
 //------------------------------------------------------------------------
 
@@ -32,39 +36,45 @@
 //------------------------------------------------------------------ Types
 
 class Catalogue {
-	
+
 //////////////////////////////////////////////////////////////////  PUBLIC
-		public : 
+		public :
 //---------------------------------------------------- Fonctions publiques
 		void AjouterTrajet(Trajet *t);
 		// Mode d'emploi :
 		//	Ajoute un trajet au catalogue.
 		// Contrat :
-		//	Aucun	
-		
+		//	Aucun
+
 		void Rechercher(char* villeDep, char* villeArr) const;
 		// Mode d'emploi :
-		//	Recherche un itinéraire à partir d'une ville de 
+		//	Recherche un itinéraire à partir d'une ville de
 		//      départ et d'une ville d'arrivée.
-		//  Remarque: Un trajet composé ne peut pas être interrompu 
+		//  Remarque: Un trajet composé ne peut pas être interrompu
 		//      en cours de route.
 		// Contrat :
-		//	Aucun	
-		
-		std::string ConstruireScript(int i) const;
+		//	Aucun
+
+		string ConstruireScript(int choixCritere, int &borneInf, int &borneSup, string &villeA, string &villeD) const;
 		// Mode d'emploi :
 		// 		Construit le script correspondant à la sauvegarde dans le fichier, en prenant
 		// en compte le critère de sélection choisi par l'utilisateur
 		// Contrat :
-		//	Aucun	
-	
-		
+		//	Aucun
+
+		bool ChargerScript(int choixCritere, int &borneInf, int &borneSup, string &villeA, string &villeD, string script) const;
+		// Mode d'emploi :
+		// 		Ajoute dans le catalogue courant, tous les trajets correspondant au script passé en paramètre,
+		// en prenant en compte le critère de sélection choisi par l'utilisateur
+		// Contrat :
+		//	Aucun
+
 		void Afficher() const;
 		// Mode d'emploi :
 		//	Affiche l'ensemble des trajets qui constituent le catalogue.
 		// Contrat :
-		//	Aucun	
-	
+		//	Aucun
+
 //------------------------------------------------Constructeur-Destructeur
 
 	 	Catalogue();
@@ -78,11 +88,11 @@ class Catalogue {
 		//	Libération de la mémoire allouée.
 		// Contrat :
 		//	Aucun
-	
-//////////////////////////////////////////////////////////////// PRIVATE	
-	private: 
+
+//////////////////////////////////////////////////////////////// PRIVATE
+	private:
 		Tableau *listeItineraires;
 		Graphe GrapheTrajets;
 		int nbItineraires;
 };
-#endif 
+#endif
