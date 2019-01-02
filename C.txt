@@ -1,0 +1,14 @@
+Nombre de trajets : 5
+TS:MLKJ,POIU,HS
+TC:Ma,Londres
+	TS:Ma,Pa,TGV
+	TS:Pa,Lille,Car
+	TS:Lille,Londres,Air
+TC:MQ,OQ
+	TS:MQ,PQ,JQ
+	TS:PQ,O,KLSTP
+	TS:O,OQ,PSDOS
+TS:POI,IUY,UYT
+TC:ZO,OD
+	TS:ZO,EO,PA
+	TS:EO,OD,KX
