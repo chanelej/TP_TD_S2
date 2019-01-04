@@ -1,13 +1,12 @@
-Nombre de trajets - 6
+﻿Nombre de trajets - 6
 TS :A,C,Voiture
-TS :B,C,Voiture
-TC :X,Dakar nombre d’étapes - 3 
+TS :A,Bagdad,Voiture
+TC :X,Bagdad nombre d’étapes - 3 
 	TS :X,Mars,Vago
-	TS :Mars,Alger,Bato
-	TS :Alger,Bagdad,4x4
+	TS :Mars,Bagdad,Bato
 TS :B,C,Voiture
-TC :X,Dakar nombre d’étapes - 3 
-	TS :X,Mars,Vago
+TC :B,C nombre d’étapes - 3 
+	TS :B,Mars,Vago
 	TS :Mars,Alger,Bato
-	TS :Alger,Bagdad,4x4
+	TS :Alger,C,4x4
 TS :B,C,Voiture
