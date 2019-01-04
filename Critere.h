@@ -29,7 +29,7 @@ class Critere
 	public:
 
 //---------------------------------------------------- Fonctions publiques
-         virtual bool ValidationCritere(Trajet *unTrajet)=0;
+         virtual bool ValidationCritere(Trajet *unTrajet);
 		// Mode d'emploi :
 		//	Renvoie true si unTrajet respecte le critère, et false sinon
 		// Contrat :
@@ -38,6 +38,12 @@ class Critere
 //----------------------------------------------- Surchages d'opérateurs
 
 //---------------------------------------------------- Destructeur
+        Critere();
+		// Mode d'emploi :
+		//	Constructeur de Critere
+		// Contrat :
+		//	Aucun
+
 		virtual ~Critere();
 		// Mode d'emploi :
 		//	Libération de la mémoire allouée
@@ -46,10 +52,6 @@ class Critere
 
 //////////////////////////////////////////////////////////////////  PROTECTED
 	protected:
-		Critere();
-		// Mode d'emploi :
-		//	Constructeur de Critere
-		// Contrat :
-		//	Aucun
+
 };
 #endif

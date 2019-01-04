@@ -37,28 +37,27 @@ void Catalogue::AjouterTrajet(Trajet *t)
 
 string Catalogue::ConstruireScript(int choixCritere, int &borneInf, int &borneSup, string &villeA, string &villeD) const{
 
-	//Pour chaque trajet du catalogue, vérifier s'il valide le critère, et si oui alors faire la suite :
+    string chaine= "Nombre de trajets : "+std::to_string(nbItineraires)+"\n";
 
-	string chaine= "Nombre de trajets : "+std::to_string(nbItineraires)+"\n";
+	//déclaration d'un Critere
+	Critere *leCritere;
+
+	//Initialisation du critère selon le choix de l'utilisateur
+	if(choixCritere == 3) {
+			leCritere = new CritereDeVilles(villeD, villeA);
+	} else if(choixCritere == 4) {
+			leCritere = new CritereAvecIntervalle(borneInf, borneSup);
+    } else if(choixCritere == 21 || choixCritere == 22) {
+			leCritere = new CritereDeType(choixCritere);
+    }
+
+    //Ajout du script du trajet dans le fichier s'il respecte le critère
 	for (int i = 0; i < nbItineraires; i++) {
-		if(choixCritere == 3) {
-			CritereDeVilles* cdv = new CritereDeVilles(villeD, villeA);
-			if(cdv->ValidationCritere(listeItineraires->Element(i))) {
-				chaine += listeItineraires->Element(i)->Script();
-			}
-  	 	} else if(choixCritere == 4) {
-			CritereAvecIntervalle* cai = new CritereAvecIntervalle(borneInf, borneSup);
-			if(cai->ValidationCritere(listeItineraires->Element(i))) {
-				chaine += listeItineraires->Element(i)->Script();
-			}
-	 	} else if(choixCritere == 21 || choixCritere == 22) {
-			CritereDeType* cdt = new CritereDeType(choixCritere);
-			if(cdt->ValidationCritere(listeItineraires->Element(i))) {
-				chaine += listeItineraires->Element(i)->Script();
-			}
-		}
-	}
-	return chaine;
+        if(leCritere->ValidationCritere(listeItineraires->Element(i))) {
+            chaine += listeItineraires->Element(i)->Script();
+        }
+    }
+        return chaine;
 }
 
 void Catalogue::ChargerScript(int nbSkip, int choixCritere, int &borneInf, int &borneSup, string &villeA, string &villeD) {
@@ -69,92 +68,91 @@ void Catalogue::ChargerScript(int nbSkip, int choixCritere, int &borneInf, int &
 	// regarder s'il valide le critère, et si oui on l'ajoute au catalogue (comme tu as fait dans le main mais faut le mettre ici)
 
 	//NB : ATTENTION : le trajet temporaire t doit être crée avec un pointeur et supprimé ensuite sinon on aura des pb ac valgrind
-	
+
 	Catalogue* c = this;
 	string name;
 	cout << "Entrez un nom de fichier :" <<  endl;
 	getline(cin, name);
 
-  ifstream infile (name, ios::in);
-  int nbrTrajets;
-  char vDep[50];
-  char vArr[50];
-  char tr[50];
-  std::string vDepart;
-  std::string vArrivee;
-  std::string transport;
-  std::string throwAway;
-  std::string ligne;
-  
-  if(infile)
-  {
-     for(int j = 0; j<nbSkip; j++)
-     {
-      getline(infile, throwAway);
-     }
+    ifstream infile (name, ios::in);
+    int nbrTrajets;
+    char vDep[50];
+    char vArr[50];
+    char tr[50];
+    std::string vDepart;
+    std::string vArrivee;
+    std::string transport;
+    std::string throwAway;
+    std::string ligne;
 
-     int i = 0;
-     string type;
-     getline(infile, throwAway, '-');
-     infile >> nbrTrajets;
-     cout << nbrTrajets << endl;
-     while(i < nbrTrajets)
-     {
-       i++;
-       do
-       {
-	 infile >> type;
-	 cout << type << endl;
-       } while(type != "TS" && type != "TC");
+    //Création du critère en fonction du choix de l'utilisateur
+    Critere *leCritere;
 
-       if(type == "TS" && choixCritere != 22)
-       {
-	 getline(infile, throwAway, ':');
-	 getline(infile, vDepart, ',');
-	 getline(infile, vArrivee, ',');
- 	 getline(infile, transport);
-	 
-	 std::strcpy(vDep, vDepart.c_str());
-	 std::strcpy(vArr, vArrivee.c_str());
-	 std::strcpy(tr, transport.c_str());
-	 TrajetSimple *t = new TrajetSimple(vDep, vArr, tr);
-	 if(choixCritere == 3) {
-		CritereDeVilles* cdv = new CritereDeVilles(villeD, villeA);
-		if(cdv->ValidationCritere(t)) {
-			AjouterTrajet(t);
-		}
-  	 } else if(choixCritere == 4) {
-		CritereAvecIntervalle* cai = new CritereAvecIntervalle(borneInf, borneSup);
-		if(cai->ValidationCritere(t)) {
-			AjouterTrajet(t);
-		}
-	 }		
-	}
-	if(type == "TC" && choixCritere != 21)
-	{
-	 TrajetCompose* tc = new TrajetCompose();
-	 nbSkip = c->ChargerScript(tc, name, i, choixCritere, borneInf, borneSup, villeA, villeD);
-	 if(choixCritere == 3) {
-		CritereDeVilles* cdv = new CritereDeVilles(villeD, villeA);
-		if(cdv->ValidationCritere(tc)) {
-			AjouterTrajet(tc);
-		}
-  	 } else if(choixCritere == 4) {
-		CritereAvecIntervalle* cai = new CritereAvecIntervalle(borneInf, borneSup);
-		if(cai->ValidationCritere(tc)) {
-			AjouterTrajet(tc);
-		}
-	 }
-	 //c->AjouterTrajet(tc);
-	 for(int j = 0; j<nbSkip+1; j++)
-    	 {
-     	  getline(infile, throwAway);
-     	 }
-	}
-      }
+    if(choixCritere == 3) {
+        leCritere = new CritereDeVilles(villeD, villeA);
+    } else if(choixCritere == 4) {
+        leCritere = new CritereAvecIntervalle(borneInf, borneSup);
+    } else {
+        leCritere= new Critere();
+    }
+
+    if(infile)
+    {
+        for(int j = 0; j<nbSkip; j++)
+        {
+            getline(infile, throwAway);
+        }
+
+        int i = 0;
+        string type;
+        getline(infile, throwAway, '-');
+        infile >> nbrTrajets;
+        cout << nbrTrajets << endl;
+        while(i < nbrTrajets)
+        {
+            i++;
+            do
+            {
+                infile >> type;
+                cout << type << endl;
+            } while(type != "TS" && type != "TC");
+
+            if(type == "TS" && choixCritere != 22)
+            {
+                getline(infile, throwAway, ':');
+                getline(infile, vDepart, ',');
+                getline(infile, vArrivee, ',');
+                getline(infile, transport);
+
+                std::strcpy(vDep, vDepart.c_str());
+                std::strcpy(vArr, vArrivee.c_str());
+                std::strcpy(tr, transport.c_str());
+                TrajetSimple *t = new TrajetSimple(vDep, vArr, tr);
+
+                //Si le trajet répond au critère, on l'ajoute
+                if(leCritere->ValidationCritere(t)) {
+                    AjouterTrajet(t);
+                }
+            }
+
+            if(type == "TC" && choixCritere != 21)
+            {
+                TrajetCompose* tc = new TrajetCompose();
+                nbSkip = c->ChargerScript(tc, name, i, choixCritere, borneInf, borneSup, villeA, villeD);
+
+                //Si le trajet répond au critère, on l'ajoute
+                if(leCritere->ValidationCritere(tc)) {
+                    AjouterTrajet(tc);
+                }
+
+                for(int j = 0; j<nbSkip+1; j++)
+                {
+                    getline(infile, throwAway);
+                }
+            }
+        }
    } else {
-	 cerr << "Impossible d'ouvrir le fichier ! Veuillez réessayer" << endl;
-	 ChargerScript(nbSkip, choixCritere, borneInf, borneSup, villeA, villeD);
+        cerr << "Impossible d'ouvrir le fichier ! Veuillez réessayer" << endl;
    }
 }
 
@@ -166,62 +164,62 @@ int Catalogue::ChargerScript(TrajetCompose *traj, std::string name, int nbSkip, 
 	// regarder s'il valide le critère, et si oui on l'ajoute au catalogue
 
 	//NB : ATTENTION : le trajet temporaire t doit être crée avec un pointeur et supprimé ensuite sinon on aura des pb ac valgrind
-  
-  ifstream infile (name, ios::in);
-  int nbrTrajets;
-  char vDep[50];
-  char vArr[50];
-  char tr[50];
-  std::string vDepart;
-  std::string vArrivee;
-  std::string transport;
-  std::string throwAway;
-  std::string ligne;
-  
-  if(infile)
-  {
-     for(int j = 0; j<nbSkip; j++)
-     {
-      getline(infile, throwAway);
-     }
 
-     int i = 0;
-     string type;
-     getline(infile, throwAway, '-');
-     infile >> nbrTrajets;
-     cout << nbrTrajets << endl;
-     while(i < nbrTrajets)
-     {
-       i++;
-       do
-       {
-	 infile >> type;
-	 cout << type << endl;
-       } while(type != "TS" && type != "TC");
-       
-       if(type == "TS")
-       {
-	 getline(infile, throwAway, ':');
-	 getline(infile, vDepart, ',');
-	 getline(infile, vArrivee, ',');
- 	 getline(infile, transport);
-	 
-	 std::strcpy(vDep, vDepart.c_str());
-	 std::strcpy(vArr, vArrivee.c_str());
-	 std::strcpy(tr, transport.c_str());
-	 TrajetSimple *t = new TrajetSimple(vDep, vArr, tr);
-	 traj->Ajouter(t);
-	}
-	if(type == "TC")
-	{
-	 TrajetCompose* tc = new TrajetCompose();
-	 ChargerScript(tc, name, i, choixCritere, borneInf, borneSup, villeA, villeD);
-	 traj->Ajouter(tc);
-	}
-      }
+    ifstream infile (name, ios::in);
+    int nbrTrajets;
+    char vDep[50];
+    char vArr[50];
+    char tr[50];
+    string vDepart;
+    string vArrivee;
+    string transport;
+    string throwAway;
+    string ligne;
+
+    if(infile)
+    {
+        for(int j = 0; j<nbSkip; j++)
+        {
+            getline(infile, throwAway);
+        }
+
+        int i = 0;
+        string type;
+        getline(infile, throwAway, '-');
+        infile >> nbrTrajets;
+        cout << nbrTrajets << endl;
+        while(i < nbrTrajets)
+        {
+            i++;
+            do
+            {
+                infile >> type;
+                cout << type << endl;
+            } while(type != "TS" && type != "TC");
+
+            if(type == "TS")
+            {
+                getline(infile, throwAway, ':');
+                getline(infile, vDepart, ',');
+                getline(infile, vArrivee, ',');
+                getline(infile, transport);
+
+                std::strcpy(vDep, vDepart.c_str());
+                std::strcpy(vArr, vArrivee.c_str());
+                std::strcpy(tr, transport.c_str());
+                TrajetSimple *t = new TrajetSimple(vDep, vArr, tr);
+                traj->Ajouter(t);
+            }
+            if(type == "TC")
+            {
+            TrajetCompose* tc = new TrajetCompose();
+            ChargerScript(tc, name, i, choixCritere, borneInf, borneSup, villeA, villeD);
+            traj->Ajouter(tc);
+            }
+        }
    } else {
-	 cerr << "Erreur lors de la relecture du fichier ! Veuillez réessayer" << endl;
-	 ChargerScript(nbSkip, choixCritere, borneInf, borneSup, villeA, villeD);
+        cerr << "Erreur lors de la relecture du fichier ! Veuillez réessayer" << endl;
+        ChargerScript(nbSkip, choixCritere, borneInf, borneSup, villeA, villeD);
    }
    return nbrTrajets;
 }
@@ -261,4 +259,7 @@ Catalogue::~Catalogue() {
 
 
 
-	
+
+
+
+

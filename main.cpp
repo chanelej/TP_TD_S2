@@ -343,9 +343,9 @@ void ouvrirCatalogue(Catalogue &c)
 
     /*TOUT CE QUI SUIT DOIT ETRE DANS LA METHODE CHARGERSCRIPT DE CATALOGUE ET PAS ICI*/
     //Ici on doit juste récupérer le contenu du fichier et l'envoyer à chargerScript (qui lui ajoute les trajets)
-    
 
 	c.ChargerScript(0, choixCritere, borneInf, borneSup, villeD, villeA);
+    afficherMenu();
 
     //NB : bien penser à faire fichier.open() et fichier.close() à la fin
 }

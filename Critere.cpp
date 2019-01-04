@@ -16,9 +16,14 @@ using namespace std;
 
 //------------------------------------------------------------- Constantes
 //----------------------------------------------------- Méthodes publiques
+
+bool Critere :: ValidationCritere(Trajet *unTrajet)
+{
+    return true;
+}
 //------------------------------------------------- Surcharge d'opérateurs
 //-------------------------------------------- Constructeurs - destructeur
-bool Critere::ValidationCritere(Trajet *unTrajet){}
+
 
 Critere::Critere()
 {
