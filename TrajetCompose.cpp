@@ -53,7 +53,7 @@ void TrajetCompose::Afficher() const
 string TrajetCompose::Script(){
 	string vD=vDep;
 	string vA=vArr;
-	string chaine ="TC:"+vD+","+vA+"\n";
+	string chaine ="TC :"+vD+","+vA+" nombres d’étapes - "+std::to_string(nbTrajetsSimple)+"\n";
 	for (int i = 0; i < nbTrajetsSimple; i++) {
 		chaine += "\t"+listeTrajets->Element(i)->Script();
 	}

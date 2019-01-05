@@ -36,8 +36,9 @@ void Catalogue::AjouterTrajet(Trajet *t)
 }
 
 string Catalogue::ConstruireScript(int choixCritere, int &borneInf, int &borneSup, string &villeA, string &villeD) const{
-
-    string chaine= "Nombre de trajets : "+std::to_string(nbItineraires)+"\n";
+    
+    int nbTrajetsSaved = 0;
+    
 
 	//déclaration d'un Critere
 	Critere *leCritere;
@@ -50,13 +51,20 @@ string Catalogue::ConstruireScript(int choixCritere, int &borneInf, int &borneSu
     } else if(choixCritere == 21 || choixCritere == 22) {
 			leCritere = new CritereDeType(choixCritere);
     }
+    
+    for (int i = 0; i < nbItineraires; i++) {
+        if(leCritere->ValidationCritere(listeItineraires->Element(i))) {
+            nbTrajetsSaved++;
+        }
+    }
+    string chaine= "Nombre de trajets - "+std::to_string(nbTrajetsSaved)+"\n";
 
     //Ajout du script du trajet dans le fichier s'il respecte le critère
 	for (int i = 0; i < nbItineraires; i++) {
         if(leCritere->ValidationCritere(listeItineraires->Element(i))) {
             chaine += listeItineraires->Element(i)->Script();
         }
-    }
+    }	
         return chaine;
 }
 
@@ -68,11 +76,11 @@ void Catalogue::ChargerScript(int nbSkip, int choixCritere, int &borneInf, int &
 	// regarder s'il valide le critère, et si oui on l'ajoute au catalogue (comme tu as fait dans le main mais faut le mettre ici)
 
 	//NB : ATTENTION : le trajet temporaire t doit être crée avec un pointeur et supprimé ensuite sinon on aura des pb ac valgrind
-
-	Catalogue* c = this;
+	int nbTrajAded = 0;
 	string name;
-	cout << "Entrez un nom de fichier :" <<  endl;
+	cout << "Entrez un nom de fichier : (entrez q pour retourner au menu)" <<  endl;
 	getline(cin, name);
+	name += ".txt";
 
     ifstream infile (name, ios::in);
     int nbrTrajets;
@@ -92,6 +100,8 @@ void Catalogue::ChargerScript(int nbSkip, int choixCritere, int &borneInf, int &
         leCritere = new CritereDeVilles(villeD, villeA);
     } else if(choixCritere == 4) {
         leCritere = new CritereAvecIntervalle(borneInf, borneSup);
+    } else if(choixCritere == 21) {
+	leCritere = new CritereDeType(choixCritere);
     } else {
         leCritere= new Critere();
     }
@@ -132,17 +142,19 @@ void Catalogue::ChargerScript(int nbSkip, int choixCritere, int &borneInf, int &
                 //Si le trajet répond au critère, on l'ajoute
                 if(leCritere->ValidationCritere(t)) {
                     AjouterTrajet(t);
+		     nbTrajAded++;
                 }
             }
 
-            if(type == "TC" && choixCritere != 21)
+            if(type == "TC")
             {
                 TrajetCompose* tc = new TrajetCompose();
-                nbSkip = c->ChargerScript(tc, name, i, choixCritere, borneInf, borneSup, villeA, villeD);
+                nbSkip = ChargerScript(tc, name, i, choixCritere, borneInf, borneSup, villeA, villeD);
 
                 //Si le trajet répond au critère, on l'ajoute
                 if(leCritere->ValidationCritere(tc)) {
                     AjouterTrajet(tc);
+		     nbTrajAded++;
                 }
 
                 for(int j = 0; j<nbSkip+1; j++)
@@ -151,17 +163,19 @@ void Catalogue::ChargerScript(int nbSkip, int choixCritere, int &borneInf, int &
                 }
             }
         }
-   } else {
+   } else if(name == "q.txt") {
+		cout << "Retour au menu" << endl;
+   } else { 
         cerr << "Impossible d'ouvrir le fichier ! Veuillez réessayer" << endl;
+	return ChargerScript(nbSkip, choixCritere, borneInf, borneSup, villeA, villeD);
+   }
+   if(nbTrajAded == 0){
+	cout << endl;
+	cout << "Attention :  avez importé un catalogue vide" << endl; 
    }
 }
 
 int Catalogue::ChargerScript(TrajetCompose *traj, std::string name, int nbSkip, int choixCritere, int &borneInf, int &borneSup, string &villeA, string &villeD) {     //Version pour TC
-
-        //Créer un Critère général (à faire une fois que j'aurai créer les classes)
-	//Selon la valeur de choixCritere l'initialiser comme le critère correspondant (idem)
-	//Pour chaque ligne du script envoyé, crée un trajet temporaire t
-	// regarder s'il valide le critère, et si oui on l'ajoute au catalogue
 
 	//NB : ATTENTION : le trajet temporaire t doit être crée avec un pointeur et supprimé ensuite sinon on aura des pb ac valgrind
 

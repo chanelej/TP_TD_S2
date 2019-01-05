@@ -308,8 +308,6 @@ void exporterCatalogue(const Catalogue &c)
     string villeD="";
     string villeA="";
 
-    int choixCrit=choixDuCritere(borneInf,borneSup,villeA,villeD);
-
     //CHOIX DU NOM DE FICHIER PAR L'UTILISATEUR (se fait dans cette méthode)
     //Gestion des cas particuliers : -> Fichier déjà existant et non vide : demander si on écrase le contenu ou non
     //                               -> Fichier non existant : vérifier que le nom est valide (certains noms peuvent poser pb ? genre "." ou " " ?)
@@ -317,10 +315,30 @@ void exporterCatalogue(const Catalogue &c)
 
     //NB : tu peux utiliser le mm principe que ds la méthode "choixDuCritere" pr gérer l'interface ac l'utilisateur selon les cas particuliers
 
-    string name = "  "; //en attendant de demander le nom à l'utilisateur
+	int choix;
+    	string name;
+	cout << "Entrez un nom de fichier :" <<  endl;
+	getline(cin, name);
+	name += ".txt";
 
-	std::ofstream outfile (name);
-	outfile << c.ConstruireScript(choixCrit,borneInf,borneSup,villeA,villeD);
+	/*ifstream infile (name, ios::in);
+	if(infile) {
+		cout << "Le fichier existe déjà, souhaitez vous :" << endl;
+		cout << "1. L’écraser" << endl;
+		cout << "2. Entrez de nouveau un nom" << endl;
+		cin >> choix;
+		if(choix == 2) {
+			return exporterCatalogue(c);
+		} else {
+			int choixCrit=choixDuCritere(borneInf,borneSup,villeA,villeD);
+			std::ofstream outfile (name);
+			outfile << c.ConstruireScript(choixCrit,borneInf,borneSup,villeA,villeD);
+		}
+	} else {*/
+		int choixCrit=choixDuCritere(borneInf,borneSup,villeA,villeD);	
+		std::ofstream outfile (name);
+		outfile << c.ConstruireScript(choixCrit,borneInf,borneSup,villeA,villeD);
+	//}
 }
 
 void ouvrirCatalogue(Catalogue &c)
@@ -335,17 +353,9 @@ void ouvrirCatalogue(Catalogue &c)
 
     //CHOIX DU FICHIER A IMPORTER : DEMANDE NOM A L'UTILISATEUR
     //Gestion des cas particuliers : fichier n'existe pas + fichier est vide + autre chose ?
-    // -> Si problème, redemander à l'utilisateur de saisir un nom
-
-     //NB : tu peux utiliser le mm principe que ds la méthode "choixDuCritere" pr gérer l'interface ac l'utilisateur selon les cas particuliers
-
-   /* bool chargementReussi=          Le booléen doit retourner quoi ici ????c.ChargerScript(choixCrit,borneInf,borneSup,villeA,villeD,script);  */
-
-    /*TOUT CE QUI SUIT DOIT ETRE DANS LA METHODE CHARGERSCRIPT DE CATALOGUE ET PAS ICI*/
-    //Ici on doit juste récupérer le contenu du fichier et l'envoyer à chargerScript (qui lui ajoute les trajets)
 
 	c.ChargerScript(0, choixCritere, borneInf, borneSup, villeD, villeA);
-    afficherMenu();
+    //afficherMenu();
 
     //NB : bien penser à faire fichier.open() et fichier.close() à la fin
 }
@@ -377,7 +387,7 @@ int choixDuCritere(int &borneInf, int &borneSup, string &villeA, string &villeD)
                 //Choix du type de trajet et gestion du cas où le chiffre ne correspond pas à l'une des propositions
                 cout << endl << "Choisissez le type trajet que vous souhaiter sélectionner :" << endl;
                 cout << "1. Trajets simples." << endl;
-                cout << "2. Trajets composés." << endl<<endl;
+                cout << "2. Trajets composés." << endl;
 
                 cin.getline(reponse, TAILLE_MAX_INDEX);
 

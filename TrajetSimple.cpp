@@ -30,7 +30,7 @@ string TrajetSimple::Script(){
 	string vD=vDep;
 	string vA=vArr;
 	string tr=transport;
-	string chaine = "TS:"+vD+","+vA+","+tr+"\n";
+	string chaine = "TS :"+vD+","+vA+","+tr+"\n";
 	return chaine;
 }
 
