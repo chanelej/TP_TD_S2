@@ -86,7 +86,7 @@ int main(){
 			rechercherItineraire(c);
 		}
 		else if (choix==4) {
-			exporterCatalogue(c);
+			exporterCatalogue(c);	
 		}
 		else if (choix ==5) {
 			ouvrirCatalogue(c);
@@ -307,13 +307,8 @@ void exporterCatalogue(const Catalogue &c)
     int borneSup=0;
     string villeD="";
     string villeA="";
-
-    //CHOIX DU NOM DE FICHIER PAR L'UTILISATEUR (se fait dans cette méthode)
-    //Gestion des cas particuliers : -> Fichier déjà existant et non vide : demander si on écrase le contenu ou non
-    //                               -> Fichier non existant : vérifier que le nom est valide (certains noms peuvent poser pb ? genre "." ou " " ?)
-    // -> Si problème, redemander à l'utilisateur de saisir un nom
-
-    //NB : tu peux utiliser le mm principe que ds la méthode "choixDuCritere" pr gérer l'interface ac l'utilisateur selon les cas particuliers
+	
+	int choixCrit=choixDuCritere(borneInf,borneSup,villeA,villeD);
 
 	int choix;
     	string name;
@@ -321,7 +316,7 @@ void exporterCatalogue(const Catalogue &c)
 	getline(cin, name);
 	name += ".txt";
 
-	/*ifstream infile (name, ios::in);
+	ifstream infile (name, ios::in);
 	if(infile) {
 		cout << "Le fichier existe déjà, souhaitez vous :" << endl;
 		cout << "1. L’écraser" << endl;
@@ -330,15 +325,13 @@ void exporterCatalogue(const Catalogue &c)
 		if(choix == 2) {
 			return exporterCatalogue(c);
 		} else {
-			int choixCrit=choixDuCritere(borneInf,borneSup,villeA,villeD);
 			std::ofstream outfile (name);
 			outfile << c.ConstruireScript(choixCrit,borneInf,borneSup,villeA,villeD);
 		}
-	} else {*/
-		int choixCrit=choixDuCritere(borneInf,borneSup,villeA,villeD);	
+	} else {	
 		std::ofstream outfile (name);
 		outfile << c.ConstruireScript(choixCrit,borneInf,borneSup,villeA,villeD);
-	//}
+	}
 }
 
 void ouvrirCatalogue(Catalogue &c)
