@@ -142,7 +142,6 @@ void Catalogue::ChargerScript(int nbSkip, int choixCritere, int &borneInf, int &
                 //Si le trajet répond au critère, on l'ajoute
                 if(leCritere->ValidationCritere(t)) {
                     AjouterTrajet(t);
-		     nbTrajAded++;
                 }
             }
 
@@ -154,7 +153,6 @@ void Catalogue::ChargerScript(int nbSkip, int choixCritere, int &borneInf, int &
                 //Si le trajet répond au critère, on l'ajoute
                 if(leCritere->ValidationCritere(tc)) {
                     AjouterTrajet(tc);
-		     nbTrajAded++;
                 }
 
                 for(int j = 0; j<nbSkip+1; j++)
@@ -169,7 +167,7 @@ void Catalogue::ChargerScript(int nbSkip, int choixCritere, int &borneInf, int &
         cerr << "Impossible d'ouvrir le fichier ! Veuillez réessayer" << endl;
 	return ChargerScript(nbSkip, choixCritere, borneInf, borneSup, villeA, villeD);
    }
-   if(nbTrajAded == 0){
+   if(nbrTrajets == 0){
 	cout << endl;
 	cout << "Attention :  avez importé un catalogue vide" << endl; 
    }
