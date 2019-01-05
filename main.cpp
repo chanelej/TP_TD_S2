@@ -354,8 +354,7 @@ void ouvrirCatalogue(Catalogue &c)
     //CHOIX DU FICHIER A IMPORTER : DEMANDE NOM A L'UTILISATEUR
     //Gestion des cas particuliers : fichier n'existe pas + fichier est vide + autre chose ?
 
-	c.ChargerScript(0, choixCritere, borneInf, borneSup, villeD, villeA);
-    //afficherMenu();
+	c.ChargerScript(0, choixCritere, borneInf, borneSup, villeA, villeD);
 
     //NB : bien penser à faire fichier.open() et fichier.close() à la fin
 }

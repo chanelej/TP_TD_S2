@@ -48,9 +48,11 @@ string Catalogue::ConstruireScript(int choixCritere, int &borneInf, int &borneSu
 			leCritere = new CritereDeVilles(villeD, villeA);
 	} else if(choixCritere == 4) {
 			leCritere = new CritereAvecIntervalle(borneInf, borneSup);
-    } else if(choixCritere == 21 || choixCritere == 22) {
+	} else if(choixCritere == 21 || choixCritere == 22) {
 			leCritere = new CritereDeType(choixCritere);
-    }
+	} else {
+		leCritere = new Critere();
+	} 
     
     for (int i = 0; i < nbItineraires; i++) {
         if(leCritere->ValidationCritere(listeItineraires->Element(i))) {
