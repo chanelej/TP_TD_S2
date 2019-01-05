@@ -365,8 +365,8 @@ int choixDuCritere(int &borneInf, int &borneSup, string &villeA, string &villeD)
         cout << "3. Selon la ville de départ et/ou la ville d'arrivée." << endl;
         cout << "4. Selon une sélection d'après un intervalle." << endl;
 
-        char* reponse = new char[TAILLE_MAX_INDEX];
-        cin.getline(reponse, TAILLE_MAX_INDEX);
+        char* reponse = new char[TAILLE_MAX_VILLE];
+        cin.getline(reponse, TAILLE_MAX_VILLE);
 
         //GESTION DES DIFFERENTS CAS
 
@@ -399,10 +399,10 @@ int choixDuCritere(int &borneInf, int &borneSup, string &villeA, string &villeD)
                 //Saisie du nom de(s) ville(s) et gestion du cas ou aucune ville n'est renseignée
                 cout << endl << "Saisissez les villes (entrez 0 si une des villes ne vous importe pas)" << endl;
                 cout << endl << "Ville de départ :" << endl;
-                cin.getline(reponse, TAILLE_MAX_INDEX);
+                cin.getline(reponse, TAILLE_MAX_VILLE);
                 villeD=reponse;
                 cout << "Ville d'arrivée : " << endl;
-                cin.getline(reponse, TAILLE_MAX_INDEX);
+                cin.getline(reponse, TAILLE_MAX_VILLE);
                 villeA=reponse;
 
             if (villeA=="0" && villeD=="0"){
