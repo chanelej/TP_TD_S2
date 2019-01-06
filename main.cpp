@@ -3,6 +3,7 @@
                              -------------------
     début                : 20/11/18
     copyright            : (C) Romain Perrone, Chanèle Jourdan - GROUPE 2_1
+				+ Quentin Ferro - Groupe 2_28 
 *************************************************************************/
 
 #define _CRT_SECURE_NO_WARNINGS
@@ -310,9 +311,9 @@ void exporterCatalogue(const Catalogue &c)
 	
 	int choixCrit=choixDuCritere(borneInf,borneSup,villeA,villeD);
 
-	int choix;
+	char* choix;
     	string name;
-	cout << "Entrez un nom de fichier :" <<  endl;
+	cout << "Entrez un nom de fichier : (entrez q pour retourner au menu)" <<  endl;
 	getline(cin, name);
 	name += ".txt";
 
@@ -320,15 +321,25 @@ void exporterCatalogue(const Catalogue &c)
 	if(infile) {
 		cout << "Le fichier existe déjà, souhaitez vous :" << endl;
 		cout << "1. L’écraser" << endl;
-		cout << "2. Entrez de nouveau un nom" << endl;
-		cin >> choix;
-		if(choix == 2) {
+		cout << "2. Écrire à la suite de ce fichier (attention : le critère de sélection s’appliquera à l’ensemble, donc aux trajets déjà présents aussi)" << endl;
+		cout << "3. Entrez de nouveau un nom" << endl;
+		cin.getline(choix, TAILLE_MAX_INDEX);
+		if(strcmp(choix, "2")==0) {
+			Catalogue c2;
+			c2.ChargerScript(name, 0, 1, borneInf, borneSup, villeA, villeD);
+			c.Concat(c2);
+			std::ofstream outfile (name);
+			outfile << c2.ConstruireScript(choixCrit,borneInf,borneSup,villeA,villeD);
+		} else if(strcmp(choix, "3")==0) {
 			return exporterCatalogue(c);
 		} else {
 			std::ofstream outfile (name);
 			outfile << c.ConstruireScript(choixCrit,borneInf,borneSup,villeA,villeD);
 		}
-	} else {	
+	} else if(name == "q.txt") {
+		cout << endl;
+		cout << "Retour au menu" << endl;
+	} else { 
 		std::ofstream outfile (name);
 		outfile << c.ConstruireScript(choixCrit,borneInf,borneSup,villeA,villeD);
 	}
@@ -336,20 +347,19 @@ void exporterCatalogue(const Catalogue &c)
 
 void ouvrirCatalogue(Catalogue &c)
 {
-    //Choix du critère par l'utilisateur via un appel à une autre méthode
-    int borneInf = 0;
-    int borneSup = 0;
-    string villeD = "";
-    string villeA = "";
+	//Choix du critère par l'utilisateur via un appel à une autre méthode
+	int borneInf = 0;
+	int borneSup = 0;
+	string villeD = "";
+	string villeA = "";
 
-    int choixCritere = choixDuCritere(borneInf, borneSup, villeA, villeD);
+	int choixCritere = choixDuCritere(borneInf, borneSup, villeA, villeD);
 
-    //CHOIX DU FICHIER A IMPORTER : DEMANDE NOM A L'UTILISATEUR
-    //Gestion des cas particuliers : fichier n'existe pas + fichier est vide + autre chose ?
-
-	c.ChargerScript(0, choixCritere, borneInf, borneSup, villeA, villeD);
-
-    //NB : bien penser à faire fichier.open() et fichier.close() à la fin
+	string name;
+	cout << "Entrez un nom de fichier : (entrez q pour retourner au menu)" <<  endl;
+	getline(cin, name);
+	name += ".txt";
+	c.ChargerScript(name, 0, choixCritere, borneInf, borneSup, villeA, villeD);
 }
 
 int choixDuCritere(int &borneInf, int &borneSup, string &villeA, string &villeD){

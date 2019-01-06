@@ -3,6 +3,7 @@
                              -------------------
     début                : 20/11/18
     copyright            : (C) Romain Perrone, Chanèle Jourdan - GROUPE 2_1
+				+ Quentin Ferro - Groupe 2_28
 *************************************************************************/
 
 //---------- Réalisation de la classe <CATALOGUE> (fichier Catalogue.cpp) -------
@@ -37,7 +38,7 @@ void Catalogue::AjouterTrajet(Trajet *t)
 
 string Catalogue::ConstruireScript(int choixCritere, int &borneInf, int &borneSup, string &villeA, string &villeD) const{
     
-    int nbTrajetsSaved = 0;
+	int nbTrajetsSaved = 0;
     
 
 	//déclaration d'un Critere
@@ -45,46 +46,39 @@ string Catalogue::ConstruireScript(int choixCritere, int &borneInf, int &borneSu
 
 	//Initialisation du critère selon le choix de l'utilisateur
 	if(choixCritere == 3) {
-			leCritere = new CritereDeVilles(villeD, villeA);
+		leCritere = new CritereDeVilles(villeD, villeA);
 	} else if(choixCritere == 4) {
-			leCritere = new CritereAvecIntervalle(borneInf, borneSup);
+		leCritere = new CritereAvecIntervalle(borneInf, borneSup);
 	} else if(choixCritere == 21 || choixCritere == 22) {
-			leCritere = new CritereDeType(choixCritere);
+		leCritere = new CritereDeType(choixCritere);
 	} else {
 		leCritere = new Critere();
 	} 
     
-    for (int i = 0; i < nbItineraires; i++) {
-        if(leCritere->ValidationCritere(listeItineraires->Element(i))) {
-            nbTrajetsSaved++;
-        }
-    }
-    string chaine= "Nombre de trajets - "+std::to_string(nbTrajetsSaved)+"\n";
-
-    //Ajout du script du trajet dans le fichier s'il respecte le critère
 	for (int i = 0; i < nbItineraires; i++) {
-        if(leCritere->ValidationCritere(listeItineraires->Element(i))) {
-            chaine += listeItineraires->Element(i)->Script();
-        }
-    }	
-        return chaine;
+		if(leCritere->ValidationCritere(listeItineraires->Element(i))) {
+		nbTrajetsSaved++;
+		}
+	}
+	string chaine= "Nombre de trajets - "+std::to_string(nbTrajetsSaved)+"\n";
+
+	//Ajout du script du trajet dans le fichier s'il respecte le critère
+	for (int i = 0; i < nbItineraires; i++) {
+		if(leCritere->ValidationCritere(listeItineraires->Element(i))) {
+		chaine += listeItineraires->Element(i)->Script();
+		}
+	}	
+	return chaine;
 }
 
-void Catalogue::ChargerScript(int nbSkip, int choixCritere, int &borneInf, int &borneSup, string &villeA, string &villeD) {
+void Catalogue::ChargerScript(std::string name, int nbSkip, int choixCritere, int &borneInf, int &borneSup, string &villeA, string &villeD) {
 
-    //Creer un Critère général (à faire une fois que j'aurai créer les classes)
-	//Selon la valeur de choixCritere l'initialiser comme le critère correspondant (idem)
+    	// 
 	//Pour chaque ligne du script envoyé, crée un trajet temporaire t
 	// regarder s'il valide le critère, et si oui on l'ajoute au catalogue (comme tu as fait dans le main mais faut le mettre ici)
+	
 
-	//NB : ATTENTION : le trajet temporaire t doit être crée avec un pointeur et supprimé ensuite sinon on aura des pb ac valgrind
-	int nbTrajAded = 0;
-	string name;
-	cout << "Entrez un nom de fichier : (entrez q pour retourner au menu)" <<  endl;
-	getline(cin, name);
-	name += ".txt";
-
-    ifstream infile (name, ios::in);
+    ifstream infile (name, ios::in);  //Ouverture d’un fichier name
     int nbrTrajets;
     char vDep[50];
     char vArr[50];
@@ -92,7 +86,7 @@ void Catalogue::ChargerScript(int nbSkip, int choixCritere, int &borneInf, int &
     std::string vDepart;
     std::string vArrivee;
     std::string transport;
-    std::string throwAway;
+    std::string throwAway;  //Certain strings récupérés ne sont pas utiles -> variable poubelle
     std::string ligne;
 
     //Création du critère en fonction du choix de l'utilisateur
@@ -108,9 +102,9 @@ void Catalogue::ChargerScript(int nbSkip, int choixCritere, int &borneInf, int &
         leCritere= new Critere();
     }
 
-    if(infile)
+    if(infile)    //Vérifie si le fichier a bien été ouvert (si il existe en général ou si erreur)
     {
-        for(int j = 0; j<nbSkip; j++)
+        for(int j = 0; j<nbSkip; j++)   //Sert à sauter les trajets d’un trajet composé : on ne veut pas les ajouter en simple aussi
         {
             getline(infile, throwAway);
         }
@@ -129,7 +123,7 @@ void Catalogue::ChargerScript(int nbSkip, int choixCritere, int &borneInf, int &
                 cout << type << endl;
             } while(type != "TS" && type != "TC");
 
-            if(type == "TS" && choixCritere != 22)
+            if(type == "TS" && choixCritere != 22)   //22 correspond à l’ajout des trajets composés
             {
                 getline(infile, throwAway, ':');
                 getline(infile, vDepart, ',');
@@ -149,8 +143,9 @@ void Catalogue::ChargerScript(int nbSkip, int choixCritere, int &borneInf, int &
 
             if(type == "TC")
             {
+		//On appelle recursivement la fonction pour un trajet composé car la structure d’un trajet composé est proche de celle d’un catalogue : un Tableau de trajet 
                 TrajetCompose* tc = new TrajetCompose();
-                nbSkip = ChargerScript(tc, name, i, choixCritere, borneInf, borneSup, villeA, villeD);
+                nbSkip = ChargerScript(tc, name, i, choixCritere, borneInf, borneSup, villeA, villeD);  
 
                 //Si le trajet répond au critère, on l'ajoute
                 if(leCritere->ValidationCritere(tc)) {
@@ -164,10 +159,16 @@ void Catalogue::ChargerScript(int nbSkip, int choixCritere, int &borneInf, int &
             }
         }
    } else if(name == "q.txt") {
+		cout << endl;
 		cout << "Retour au menu" << endl;
-   } else { 
-        cerr << "Impossible d'ouvrir le fichier ! Veuillez réessayer" << endl;
-	return ChargerScript(nbSkip, choixCritere, borneInf, borneSup, villeA, villeD);
+   } else {
+	cout << endl; 
+	cerr << "Impossible d'ouvrir le fichier ! Veuillez réessayer" << endl;
+	string name;
+	cout << "Entrez un nom de fichier : (entrez q pour retourner au menu)" <<  endl;
+	getline(cin, name);
+	name += ".txt";
+	return ChargerScript(name, nbSkip, choixCritere, borneInf, borneSup, villeA, villeD);
    }
    if(nbrTrajets == 0){
 	cout << endl;
@@ -175,7 +176,8 @@ void Catalogue::ChargerScript(int nbSkip, int choixCritere, int &borneInf, int &
    }
 }
 
-int Catalogue::ChargerScript(TrajetCompose *traj, std::string name, int nbSkip, int choixCritere, int &borneInf, int &borneSup, string &villeA, string &villeD) {     //Version pour TC
+int Catalogue::ChargerScript(TrajetCompose *traj, std::string name, int nbSkip, int choixCritere, int &borneInf, int &borneSup, string &villeA, string &villeD) {     
+//Version pour TC
 
 	//NB : ATTENTION : le trajet temporaire t doit être crée avec un pointeur et supprimé ensuite sinon on aura des pb ac valgrind
 
@@ -232,10 +234,15 @@ int Catalogue::ChargerScript(TrajetCompose *traj, std::string name, int nbSkip, 
             }
         }
    } else {
-        cerr << "Erreur lors de la relecture du fichier ! Veuillez réessayer" << endl;
-        ChargerScript(nbSkip, choixCritere, borneInf, borneSup, villeA, villeD);
+        cerr << "Une erreur est survenue ! Veuillez réessayer" << endl;
    }
    return nbrTrajets;
+}
+
+void Catalogue::Concat(Catalogue &c) const {
+	for (int i = 0; i < nbItineraires; i++) {
+		c.AjouterTrajet(listeItineraires->Element(i));
+        }
 }
 
 void Catalogue::Rechercher(char* villeDep, char* villeArr) const
@@ -264,7 +271,6 @@ Catalogue::~Catalogue() {
 		cout << "Appel au destructeur de Catalogue" << endl;
 	#endif
 
-	delete[] listeItineraires;
 }
 
  //------------------------------------------------------------------ PRIVE

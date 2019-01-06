@@ -3,6 +3,7 @@
                              -------------------
     début                : 20/11/18
     copyright            : (C) Romain Perrone, Chanèle Jourdan - GROUPE 2_1
+				+ Quentin Ferro - Groupe 2_28
 *************************************************************************/
 
 //---------- Réalisation de la classe <TRAJET_COMPOSE> (fichier TrajetCompose.cpp) -------

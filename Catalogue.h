@@ -3,6 +3,7 @@
                              -------------------
     début                : 20/11/18
     copyright            : (C) Romain Perrone, Chanèle Jourdan - GROUPE 2_1
+				+ Quentin Ferro - Groupe 2_28
 *************************************************************************/
 
 //---------- Interface du module <CATALOGUE> (fichier Catalogue.h) -------------------
@@ -62,7 +63,7 @@ class Catalogue {
 		// Contrat :
 		//	Aucun
 
-		void ChargerScript(int nbSkip, int choixCritere, int &borneInf, int &borneSup, string &villeA, string &villeD);
+		void ChargerScript(std::string name, int nbSkip, int choixCritere, int &borneInf, int &borneSup, string &villeA, string &villeD);
 		// Mode d'emploi :
 		// 		Ajoute dans le catalogue courant, tous les trajets correspondant au script passé en paramètre,
 		// en prenant en compte le critère de sélection choisi par l'utilisateur
@@ -72,6 +73,12 @@ class Catalogue {
 		int ChargerScript(TrajetCompose *traj, std::string name, int nbSkip, int choixCritere, int &borneInf, int &borneSup, string &villeA, string &villeD);
 		// Mode d'emploi :
 		// 		Utilisé pour un appel récursif lorsque l’on tombe sur un trajet composé
+		// Contrat :
+		//	Aucun
+		
+		void Concat(Catalogue &c) const;
+		// Mode d'emploi :
+		// 	Ajoute les trajets du catalogue courant au catalogue c
 		// Contrat :
 		//	Aucun
 
