@@ -2,8 +2,7 @@
                            CRITEREAVECINTERVALLE -  description
                              -------------------
     début                : 20/11/18
-    copyright            : (C) Romain Perrone, Chanèle Jourdan - GROUPE 2_1
-				+ Quentin Ferro - Groupe 2_28
+    copyright            : (C) Quentin Ferro, Chanèle Jourdan - GROUPE 2_28
 *************************************************************************/
 
 //---------- Réalisation de la classe <CRITEREAVECINTERVALLE> (fichier CritereAvecIntervalle.cpp) -------
@@ -22,11 +21,10 @@ using namespace std;
  bool CritereAvecIntervalle::ValidationCritere(Trajet *unTrajet){
 
     bool valide=false;
-        cout<<"index : "<<indexTrajet<<endl;
+
     if (indexTrajet>=borneInf && indexTrajet<=borneSup)
     {
         valide=true;
-
     }
     indexTrajet++;
 

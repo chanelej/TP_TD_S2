@@ -3,8 +3,7 @@
                            CRITEREAVECINTERVALLE  -  description
                              -------------------
     dÈbut                : 20/11/18
-    copyright            : (C) Romain Perrone, Chanèle Jourdan - GROUPE 2_1
-				+ Quentin Ferro - Groupe 2_28
+    copyright            : (C) Quentin Ferro, ChanËle Jourdan - GROUPE 2_28
 *************************************************************************/
 
 //---------- Interface du module <CRITEREAVECINTERVALLE> (fichier CritereAvecIntervalle.h) -------------------
@@ -36,6 +35,7 @@ class CritereAvecIntervalle : public Critere
 		//	Renvoie true si la position de unTrajet dans le fichier est dans l'intervalle
 		// Contrat :
 		//	Aucun
+
 
 //----------------------------------------------- Surchages d'opÈrateurs
 

@@ -2,8 +2,7 @@
                            CRITEREDETYPE -  description
                              -------------------
     dÈbut                : 20/11/18
-    copyright            : (C) Romain Perrone, Chanèle Jourdan - GROUPE 2_1
-				+ Quentin Ferro - Groupe 2_28
+    copyright            : (C) Quentin Ferro, ChanËle Jourdan - GROUPE 2_28
 *************************************************************************/
 
 //---------- RÈalisation de la classe <CRITEREDETYPE> (fichier CritereDeType.cpp) -------

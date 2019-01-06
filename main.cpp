@@ -3,7 +3,7 @@
                              -------------------
     début                : 20/11/18
     copyright            : (C) Romain Perrone, Chanèle Jourdan - GROUPE 2_1
-				+ Quentin Ferro - Groupe 2_28 
+				+ Quentin Ferro - Groupe 2_28
 *************************************************************************/
 
 #define _CRT_SECURE_NO_WARNINGS
@@ -13,6 +13,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <ctype.h>
 
 #include "Trajet.h"
 #include "TrajetSimple.h"
@@ -63,17 +64,6 @@ int main(){
 	Catalogue c;
 	bool quitter = false;
 
-	/*TrajetSimple *t1 = new TrajetSimple("A", "B", "Voiture");
-	TrajetSimple *t2 = new TrajetSimple("B", "C", "Voiture");
-	TrajetCompose coucou;
-	coucou.Ajouter(t1);
-	coucou.Ajouter(t2);
-
-	c.AjouterTrajet(t1);
-	c.AjouterTrajet(t2);
-
-	*/
-
 	while(!quitter) {
 		choix = afficherMenu();
 
@@ -87,7 +77,7 @@ int main(){
 			rechercherItineraire(c);
 		}
 		else if (choix==4) {
-			exporterCatalogue(c);	
+			exporterCatalogue(c);
 		}
 		else if (choix ==5) {
 			ouvrirCatalogue(c);
@@ -115,7 +105,7 @@ unsigned int afficherMenu()
 		cout << "3. Rechercher un parcours" << endl;
 		cout << "4. Sauvegarder le catalogue courant" << endl;
 		cout << "5. Charger un catalogue depuis un fichier"<< endl;
-		cout << "6. Enregistrer et quitter" << endl;
+		cout << "6. Quitter l'application" << endl;
 
 		char* reponse = new char[TAILLE_MAX_INDEX];
 		cin.getline(reponse, TAILLE_MAX_INDEX);
@@ -308,9 +298,10 @@ void exporterCatalogue(const Catalogue &c)
     int borneSup=0;
     string villeD="";
     string villeA="";
-	
+
 	int choixCrit=choixDuCritere(borneInf,borneSup,villeA,villeD);
 
+	//Gestion du fichier
 	char* choix;
     	string name;
 	cout << "Entrez un nom de fichier : (entrez q pour retourner au menu)" <<  endl;
@@ -318,12 +309,16 @@ void exporterCatalogue(const Catalogue &c)
 	name += ".txt";
 
 	ifstream infile (name, ios::in);
+
+	//Gestion des cas particuliers liés au fichier
 	if(infile) {
+
 		cout << "Le fichier existe déjà, souhaitez vous :" << endl;
 		cout << "1. L’écraser" << endl;
 		cout << "2. Écrire à la suite de ce fichier (attention : le critère de sélection s’appliquera à l’ensemble, donc aux trajets déjà présents aussi)" << endl;
 		cout << "3. Entrez de nouveau un nom" << endl;
 		cin.getline(choix, TAILLE_MAX_INDEX);
+
 		if(strcmp(choix, "2")==0) {
 			Catalogue c2;
 			c2.ChargerScript(name, 0, 1, borneInf, borneSup, villeA, villeD);
@@ -336,10 +331,11 @@ void exporterCatalogue(const Catalogue &c)
 			std::ofstream outfile (name);
 			outfile << c.ConstruireScript(choixCrit,borneInf,borneSup,villeA,villeD);
 		}
+
 	} else if(name == "q.txt") {
 		cout << endl;
 		cout << "Retour au menu" << endl;
-	} else { 
+	} else {
 		std::ofstream outfile (name);
 		outfile << c.ConstruireScript(choixCrit,borneInf,borneSup,villeA,villeD);
 	}
@@ -355,6 +351,7 @@ void ouvrirCatalogue(Catalogue &c)
 
 	int choixCritere = choixDuCritere(borneInf, borneSup, villeA, villeD);
 
+    //Gestion des fichiers
 	string name;
 	cout << "Entrez un nom de fichier : (entrez q pour retourner au menu)" <<  endl;
 	getline(cin, name);
@@ -426,20 +423,36 @@ int choixDuCritere(int &borneInf, int &borneSup, string &villeA, string &villeD)
             choix = atoi(reponse);
             bool bornesValides;
 
+
             do{
                 bornesValides=true;
+                bool borneChiffre=true;
+
                 //Saisie des bornes de l'intervalle
                 cout << endl << "Saisissez les bornes de l'intervalle souhaité" << endl;
                 cout << endl << "Borne inférieure :" << endl;
                 cin.getline(reponse, TAILLE_MAX_INDEX);
+                if(!(isdigit(reponse[0]))){
+                    bornesValides=false;
+                    borneChiffre=false;
+                }
                 borneInf=atoi(reponse);
 
                 cout << "Borne supérieure : " << endl;
                 cin.getline(reponse, TAILLE_MAX_INDEX);
+                if(!(isdigit(reponse[0]))){
+                    borneChiffre=false;
+                    bornesValides=false;
+                }
                 borneSup=atoi(reponse);
 
+                //Gestion du cas où une des bornes n'est pas un nombre:
+                if (!borneChiffre){
+                    cout<<endl<<"Les bornes doivent être des nombres, veuillez réessayer"<<endl<<endl;
+                }
+
                 //Gestion du cas où il y a une borne nulle (ou plusieurs)
-                if(borneSup==0 || borneInf==0){
+                if((borneSup==0 || borneInf==0)&&borneChiffre){
                     bornesValides=false;
                     if(borneInf==0){
                         borneInf++;
@@ -456,7 +469,7 @@ int choixDuCritere(int &borneInf, int &borneSup, string &villeA, string &villeD)
                 }
 
                  //Gestion du cas où il y a une borne négative (ou plusieurs)
-                if(borneSup<0 || borneInf<0){
+                if((borneSup<0 || borneInf<0)&&borneChiffre){
                     bornesValides=false;
                     if(borneInf<0){
                         borneInf=-borneInf;
@@ -473,7 +486,7 @@ int choixDuCritere(int &borneInf, int &borneSup, string &villeA, string &villeD)
                 }
 
                   //Gestion du cas où borneInf est plus grande que borneSup
-                if(borneSup<borneInf){
+                if((borneSup<borneInf)&&borneChiffre){
                     bornesValides=false;
 
                     int tmp;
@@ -487,7 +500,6 @@ int choixDuCritere(int &borneInf, int &borneSup, string &villeA, string &villeD)
                         bornesValides=true;
                     }
                 }
-
             }while (!bornesValides);
         }
 

@@ -2,8 +2,7 @@
                            CRITEREDEVILLES -  description
                              -------------------
     début                : 20/11/18
-    copyright            : (C) Romain Perrone, Chanèle Jourdan - GROUPE 2_1
-				+ Quentin Ferro - Groupe 2_28
+    copyright            : (C) Quentin Ferro, Chanèle Jourdan - GROUPE 2_28
 *************************************************************************/
 
 //---------- Réalisation de la classe <CRITEREDEVILLES> (fichier CritereDeVilles.cpp) -------

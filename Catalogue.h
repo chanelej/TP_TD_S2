@@ -59,14 +59,14 @@ class Catalogue {
 		string ConstruireScript(int choixCritere, int &borneInf, int &borneSup, string &villeA, string &villeD) const;
 		// Mode d'emploi :
 		// 		Construit le script correspondant à la sauvegarde dans le fichier, en prenant
-		// en compte le critère de sélection choisi par l'utilisateur
+		//      en compte le critère de sélection choisi par l'utilisateur
 		// Contrat :
 		//	Aucun
 
 		void ChargerScript(std::string name, int nbSkip, int choixCritere, int &borneInf, int &borneSup, string &villeA, string &villeD);
 		// Mode d'emploi :
 		// 		Ajoute dans le catalogue courant, tous les trajets correspondant au script passé en paramètre,
-		// en prenant en compte le critère de sélection choisi par l'utilisateur
+		//      en prenant en compte le critère de sélection choisi par l'utilisateur
 		// Contrat :
 		//	Aucun
 
@@ -75,16 +75,16 @@ class Catalogue {
 		// 		Utilisé pour un appel récursif lorsque l’on tombe sur un trajet composé
 		// Contrat :
 		//	Aucun
-		
+
 		void Concat(Catalogue &c) const;
 		// Mode d'emploi :
-		// 	Ajoute les trajets du catalogue courant au catalogue c
+		//  Ajoute les trajets du catalogue courant au catalogue c
 		// Contrat :
 		//	Aucun
 
 		void Afficher() const;
 		// Mode d'emploi :
-		//	Affiche l'ensemble des trajets qui constituent le catalogue.
+		//	 Affiche l'ensemble des trajets qui constituent le catalogue.
 		// Contrat :
 		//	Aucun
 

@@ -21,7 +21,7 @@ using namespace std;
 
 //------------------------------------------------------------- Constantes
 //----------------------------------------------------- Méthodes publiques
-	
+
 void TrajetCompose::Ajouter(Trajet *t)
 {
 	// Ajout d'un trajet simple à la liste de trajet
@@ -34,9 +34,9 @@ void TrajetCompose::Ajouter(Trajet *t)
 
 	Trajet::vArr = t->getVilleArr();
 	nbTrajetsSimple++;
-} 
+}
 
-void TrajetCompose::Afficher() const 
+void TrajetCompose::Afficher() const
 {
 // Algorithme :
 // Parcourt du tableau et appel de la méthode Afficher de chacun de ses éléments
@@ -47,9 +47,7 @@ void TrajetCompose::Afficher() const
 		cout << "Etape " << i+1 << ": ";
 		listeTrajets->AfficherElement(i);
 	}
-	
-	cout << endl;
-} 
+}
 
 string TrajetCompose::Script(){
 	string vD=vDep;
@@ -73,8 +71,8 @@ Trajet * TrajetCompose::copy()
 //------------------------------------------------- Surcharge d'opérateurs
 
 //-------------------------------------------- Constructeurs - destructeur
-	
-TrajetCompose::TrajetCompose() : Trajet(), nbTrajetsSimple(0) 
+
+TrajetCompose::TrajetCompose() : Trajet(), nbTrajetsSimple(0)
 {
 // Algorithme :
 // Création d'un Tableau représentant la liste des trajets et définition des villes de départ et d'arrivée
@@ -86,7 +84,7 @@ TrajetCompose::TrajetCompose() : Trajet(), nbTrajetsSimple(0)
 	listeTrajets = new Tableau();
 	Trajet::vDep = "";
 	Trajet::vArr = "";
-} 
+}
 
 TrajetCompose::TrajetCompose(TrajetCompose const& unTrajetCompose)
 {
@@ -106,15 +104,15 @@ TrajetCompose::TrajetCompose(TrajetCompose const& unTrajetCompose)
 	}
 }
 
-TrajetCompose::~TrajetCompose() 
+TrajetCompose::~TrajetCompose()
 {
 	#if defined (MAP)
 		cout << "Appel au destructeur TrajetCompose" << endl;
 	#endif
 }
-	
+
 //------------------------------------------------------------------ PRIVE
 
 //----------------------------------------------------- Méthodes protégées
 
-	
+
