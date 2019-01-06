@@ -1,49 +1,41 @@
-.PHONY: clean
+.PHONY: $(clean)
+
+#variables
 
 CC=g++
+RM=rm
+CLEAN=clean
+
 CFLAGS=-c -ansi -pedantic -g -std=c++11 -DMAP
 LDFLAGS=-ansi -pedantic -g -std=c++11 -DMAP
-SOURCES=main.cpp Tableau.cpp Trajet.cpp TrajetSimple.cpp TrajetCompose.cpp Catalogue.cpp Graphe.cpp Noeud.cpp Critere.cpp CritereDeVilles.cpp CritereAvecIntervalle.cpp CritereDeType.cpp
+
+SOURCES=$(wildcard *.cpp)
 OBJECTS=$(SOURCES:.cpp=.o)
+EXECUTABLE=GestionDeTrajets
 
-GestionDeTrajets: $(OBJECTS)
-	$(CC) -o GestionDeTrajets $(OBJECTS) $(LDFLAGS)
 
-main.o: main.cpp
-	$(CC) -o $@ $(CFLAGS) $< 
+#édition des liens :
+$(EXECUTABLE): $(OBJECTS)
+	$(CC) -o $(EXECUTABLE) $(OBJECTS) $(LDFLAGS)
 	
-Tableau.o: Tableau.cpp Tableau.h
-	$(CC) -o $@ $(CFLAGS) $< 
-
-Trajet.o: Trajet.cpp Trajet.h
-	$(CC) -o $@ $(CFLAGS) $< 
-
-TrajetSimple.o: TrajetSimple.cpp Trajet.h TrajetSimple.h
-	$(CC) -o $@ $(CFLAGS) $< 
-
-TrajetCompose.o: TrajetCompose.cpp TrajetCompose.h Trajet.h Tableau.h
-	$(CC) -o $@ $(CFLAGS) $< 
-
-Catalogue.o: Catalogue.cpp Catalogue.h Trajet.h Tableau.h
-	$(CC) -o $@ $(CFLAGS) $< 
-
-Noeud.o: Noeud.cpp Noeud.h
-	$(CC) -o $@ $(CFLAGS) $<
-
-Graphe.o: Graphe.cpp Graphe.h
-	$(CC) -o $@ $(CFLAGS) $<
-
-Critere.o: Critere.cpp Critere.h
-	$(CC) -o $@ $(CFLAGS) $<
+#compilation :	
+%.o: %.cpp
+	 $(CC) -o $@ $(CFLAGS) $<
 	
-CritereDeVilles.o: CritereDeVilles.cpp CritereDeVilles.h
-	$(CC) -o $@ $(CFLAGS) $<
-	
-CritereAvecIntervalle.o: CritereAvecIntervalle.cpp CritereAvecIntervalle.h
-	$(CC) -o $@ $(CFLAGS) $<
+#suppression :	
+$(CLEAN):
+	@$(RM) $(OBJECTS) $(EXECUTABLE) core
 
-CritereDeType.o: CritereDeType.cpp CritereDeType.h
-	$(CC) -o $@ $(CFLAGS) $<
-	
-clean:
-	rm $(OBJECTS) $(EXECUTABLE) core
+#liens entre les fichiers
+main.o: Catalogue.h
+Tableau.o: Tableau.h Trajet.h Graphe.h
+Trajet.o:Trajet.h
+TrajetSimple.o: Trajet.h TrajetSimple.h
+TrajetCompose.o: TrajetCompose.h Trajet.h Tableau.h
+Catalogue.o: Catalogue.h Tableau.h Graphe.h TrajetSimple.h TrajetCompose.h Critere.h
+Noeud.o: Noeud.h
+Graphe.o: Graphe.h Noeud.h
+Critere.o: Critere.h Trajet.h
+CritereDeVilles.o: CritereDeVilles.h Critere.h
+CritereAvecIntervalle.o: CritereAvecIntervalle.h Critere.h
+CritereDeType.o: CritereDeType.h Critere.h

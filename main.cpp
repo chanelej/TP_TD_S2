@@ -299,10 +299,10 @@ void exporterCatalogue(const Catalogue &c)
     string villeD="";
     string villeA="";
 
-	int choixCrit=choixDuCritere(borneInf,borneSup,villeA,villeD);
+	int choixCrit = choixDuCritere(borneInf,borneSup,villeA,villeD);
 
 	//Gestion du fichier
-	char* choix;
+	char* choix = new char[TAILLE_MAX_INDEX];
     	string name;
 	cout << "Entrez un nom de fichier : (entrez q pour retourner au menu)" <<  endl;
 	getline(cin, name);
@@ -339,6 +339,7 @@ void exporterCatalogue(const Catalogue &c)
 		std::ofstream outfile (name);
 		outfile << c.ConstruireScript(choixCrit,borneInf,borneSup,villeA,villeD);
 	}
+	delete[] choix;
 }
 
 void ouvrirCatalogue(Catalogue &c)
